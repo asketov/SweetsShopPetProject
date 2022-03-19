@@ -22,5 +22,53 @@ namespace SweetsShop.Controllers
             IEnumerable<Category> objList = _db.Categories;
             return View(objList);
         }
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category category)
+        {
+            if (category == null)
+                return NotFound();
+            _db.Categories.Add(category);
+            _db.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Edit(int? id)
+        {
+            if (id == 0 || id == null)
+            {
+                return NotFound();
+            }
+            var obj = _db.Categories.FirstOrDefault(u => u.Id == id);
+            if (obj == null) return NotFound();
+            return View(obj);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+        public IActionResult Delete(int? id)
+        {
+            if (id == 0 || id == null)
+            {
+                return NotFound();
+            }
+            var obj = _db.Categories.FirstOrDefault(u => u.Id == id);
+            if (obj==null) return NotFound();
+            _db.Categories.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

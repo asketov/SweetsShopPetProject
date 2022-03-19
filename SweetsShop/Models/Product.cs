@@ -20,7 +20,6 @@ namespace SweetsShop.Models
         public double Price100g { get; set; }
         public string Description { get; set; }
         public string ShortDescription { get; set; }
-        [Required]
         public string Image { get; set; }
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
