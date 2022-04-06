@@ -29,6 +29,12 @@ namespace SweetsShop
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")
                 ));
+            services.AddHttpContextAccessor();
+            services.AddSession(Options => {
+                Options.IdleTimeout = TimeSpan.FromMinutes(10);
+                Options.Cookie.HttpOnly = true;
+                Options.Cookie.IsEssential = true;
+            });
             services.AddControllersWithViews();
         }
 
@@ -49,8 +55,9 @@ namespace SweetsShop
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

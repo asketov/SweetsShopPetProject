@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using SweetsShop.Additionaly
+@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +11,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/fontawesome/css/all.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css">
+    
 </head>
 <body>
     <header>
@@ -21,10 +25,34 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                                Content Management
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
+                                <li><hr class="dropdown-divider"></li>
+                            </ul>
+                        </li>
+                        <li>
+                            @if(HttpContextAccessor.HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart)!=null)
+                            {
+                                <a asp-action="Index" asp-controller="Cart" class="nav-link">
+                                    @{
+                                        var count = HttpContextAccessor.HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart).Count;
+                                    }
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (@count)
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (0)  
+                                </a>
+                            }
                         </li>
                     </ul>
                 </div>
@@ -36,6 +64,7 @@
             @RenderBody()
         </main>
     </div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

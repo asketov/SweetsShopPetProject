@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\product\" />
+    <Folder Include="Новая папка\" />
   </ItemGroup>
 
 </Project>
