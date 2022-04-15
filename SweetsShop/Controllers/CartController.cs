@@ -28,7 +28,7 @@ namespace SweetsShop.Controllers
         {
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
-                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() != 0)
+                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Any() != false)
             {
                 //session exists
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
@@ -44,7 +44,7 @@ namespace SweetsShop.Controllers
         {
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
-                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() != 0)
+                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Any() != false)
             {
                 //session exists
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);

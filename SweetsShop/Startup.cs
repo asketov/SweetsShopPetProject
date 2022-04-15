@@ -32,7 +32,7 @@ namespace SweetsShop
                 ));
             services.AddHttpContextAccessor();
             services.AddSession(Options => {
-                Options.IdleTimeout = TimeSpan.FromMinutes(10);
+                Options.IdleTimeout = TimeSpan.FromMinutes(100);
                 Options.Cookie.HttpOnly = true;
                 Options.Cookie.IsEssential = true;
             });

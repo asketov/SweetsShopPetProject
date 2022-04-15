@@ -1,0 +1,125 @@
+﻿@model SweetsShop.Models.ViewModels.AccountVM
+<form>
+    <div class="border p-3">
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="User.Email"></label>
+                    </div>
+                    <div class="col-6">
+                        <input asp-for="User.Email" disabled class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="User.Address"></label>
+                    </div>
+                    @if (Model.User.Address != null)
+                    {
+                        <div class="col-6 Address">
+                            <div>
+                                <input disabled asp-for="User.Address" class="form-control"/>
+                            </div>
+                            <div class="col-2 plusAddress">
+                                <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-8 plusAddress">
+                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    }
+                    <div class="col-6 AddAddress" style="display: none;">
+                        <input type="text" asp-for="AddressModel.City" placeholder="Город *" class="form-control col-12"/>
+                        <input type="text" asp-for="AddressModel.District" placeholder="Район *" class="form-control col-12"/>
+                        <input type="text" asp-for="AddressModel.Street" placeholder="Улица *" class="form-control col-12"/>
+                        <div class="row col-12">
+                            <input type="text" asp-for="AddressModel.House" placeholder="Дом *" class="form-control"/>
+                            <input type="text" asp-for="AddressModel.Housing" placeholder="Корпус" class="form-control"/>
+                            <input type="text" asp-for="AddressModel.Entrance" placeholder="Подъезд" class="form-control"/>
+                        </div>
+                        <div class="row col-12">
+                            <input type="text" asp-for="AddressModel.Floor" placeholder="Этаж" class="form-control"/>
+                            <input type="text" asp-for="AddressModel.Flat" placeholder="Кв-ра/Офис *" class="form-control"/>
+                        </div>
+                        <div class="row col-12">
+                            <button type="button" style="box-shadow: none;" class="btn btn-primary backAddAddress">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="User.Phone"></label>
+                    </div>
+                    @if (Model.User.Phone != null)
+                    {
+                        <div class="col-6 Phone">
+                            <input disabled asp-for="User.Phone" class="form-control"/>
+                        </div>
+                        <div class="col-2 pl-0 plusPhone">
+                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </div>
+                        
+                    }
+                    else
+                    {
+                        <div class="col-8 plusPhone">
+                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    }
+                    <div class="col-6 AddPhone" style="display: none;">
+                        <input type="text" asp-for="User.Phone" placeholder="Телефон *"/>
+                        <span asp-validation-for="User.Phone" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4 offset-5 row">
+                        <div class="col">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-success w-100"><i class="fas fa-sign-out-alt"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function(){
+            $(".plusAddress").click(function(){
+                $('.AddAddress').show('1000');
+                $('.plusAddress').hide();
+                $('.Address').hide();
+            });
+            $(".plusPhone").click(function(){
+                $('.AddPhone').show('1000');
+                $('.plusPhone').hide();
+                $('.Phone').hide();
+            });
+            $(".backAddAddress").click(function(){
+                $('.AddAddress').hide();
+                $('.plusAddress').show();
+                $('.Address').show();
+            });
+        });
+    </script>
+    @{<partial name="_ValidationScriptsPartial"/>}
+}

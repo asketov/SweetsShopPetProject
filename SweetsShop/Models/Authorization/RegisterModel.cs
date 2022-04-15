@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SweetsShop.Models.Authorization
 {
@@ -11,9 +6,12 @@ namespace SweetsShop.Models.Authorization
     {
         [Required(ErrorMessage = "Не указан Email")]
         [EmailAddress(ErrorMessage = "Неправильно указан Email")]
+        [StringLength(200, ErrorMessage = "Слишком длинный email")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Не указан пароль")]
+        [StringLength(50,ErrorMessage = "Слишком длинный пароль")]
+        [MinLength(6,ErrorMessage = "Минимальная длина 6 символов")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

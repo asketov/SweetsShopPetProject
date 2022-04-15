@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SweetsShop.Models;
-using SweetsShop.Models.Authorization;
+using SweetsShop.Models.Client;
 
 namespace SweetsShop.Data
 {

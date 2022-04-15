@@ -6,11 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SweetsShop.Additionaly;
 using SweetsShop.Data;
 using SweetsShop.Models.Authorization;
+using SweetsShop.Models.Client;
+using SweetsShop.Models.ViewModels;
 
 namespace SweetsShop.Controllers
 {
@@ -20,6 +23,19 @@ namespace SweetsShop.Controllers
         public AccountController(ApplicationDbContext db)
         {
             _db = db;
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            AccountVM AccountVM = new AccountVM()
+            {
+                User = await _db.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Email == User.Identity.Name),
+                AddressModel = new AddressModel()
+            };
+            return View(AccountVM);
         }
         [HttpGet]
         public IActionResult Register()
@@ -42,8 +58,7 @@ namespace SweetsShop.Controllers
                     await _db.SaveChangesAsync();
                     user.Role = new Role() {Name = "User"};
                     await Authenticate(user); // аутентификация
-
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Cart");
                 }
                 else
                     ModelState.AddModelError("", "Пользователь с таким Email уже существует");
@@ -68,7 +83,7 @@ namespace SweetsShop.Controllers
                 {
                     await Authenticate(user); // аутентификация
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Cart");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }

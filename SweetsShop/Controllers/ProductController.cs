@@ -62,6 +62,19 @@ namespace SweetsShop.Controllers
             return View(productVM);
         }
 
+        public IActionResult Delete(int? id)
+        {
+            if (id == 0 || id == null)
+            {
+                return NotFound();
+            }
+            var obj = _db.Products.FirstOrDefault(u => u.Id == id);
+            if (obj == null) return NotFound();
+            _db.Products.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(ProductVM ProductVM)
