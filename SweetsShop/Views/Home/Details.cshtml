@@ -29,6 +29,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-12 m-0 row" style="text-align: end;">
+                    <button type="button" asp-route-id="@Model.Product.Id" asp-action="RemoveFromCart" onclick="minusCount()" style="text-align: end; font-size: 25px; box-shadow: none;" class="minus col-5 btn">
+                        <i class="fa-solid fa-circle-minus"></i>
+                    </button>
+                    <div class="col-2" style="padding-top: 15px;  font-size: 25px; text-align: center">
+                        <p>0</p>
+                    </div>
+                    <button type="submit" asp-route-id="@Model.Product.Id" asp-action="Details" onclick="plusCount()" style="text-align: justify; font-size: 25px; box-shadow: none;" class="plus col-5 btn">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </button>
+                </div>
                 <div class="card-footer bg-dark">
                     <div class="row">
                         <div class="col-12 col-md-6 pb-1 ">

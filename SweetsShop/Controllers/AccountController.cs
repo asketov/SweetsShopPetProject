@@ -37,6 +37,37 @@ namespace SweetsShop.Controllers
             };
             return View(AccountVM);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAddress(AccountVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                user.Address = model.AddressModel.City + " " + model.AddressModel.District + " " + model.AddressModel.Street + " "
+                               + model.AddressModel.House + " дом " + model.AddressModel.Housing + " корпус " + model.AddressModel.Entrance + " подъезд "
+                               + model.AddressModel.Floor + " этаж " + model.AddressModel.Flat + "кв/офис";
+                _db.Update(user);
+                await _db.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPhone(AccountVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                if (user.Phone != model.User.Phone || user.Phone == null)
+                {
+                    user.Phone = model.User.Phone;
+                    _db.Update(user);
+                }
+                await _db.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
         [HttpGet]
         public IActionResult Register()
         {
@@ -58,7 +89,7 @@ namespace SweetsShop.Controllers
                     await _db.SaveChangesAsync();
                     user.Role = new Role() {Name = "User"};
                     await Authenticate(user); // аутентификация
-                    return RedirectToAction("Index", "Cart");
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                     ModelState.AddModelError("", "Пользователь с таким Email уже существует");
@@ -83,7 +114,7 @@ namespace SweetsShop.Controllers
                 {
                     await Authenticate(user); // аутентификация
 
-                    return RedirectToAction("Index", "Cart");
+                    return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }

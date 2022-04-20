@@ -26,9 +26,9 @@ namespace SweetsShop.Models.Authorization
         [StringLength(50)]
         public string Entrance { get; set; }
         [StringLength(50)]
+        [Required(ErrorMessage = "Введите квартиру или офис")]
         public string Flat { get; set; }
         [StringLength(50)]
-        [Required(ErrorMessage = "Введите квартиру или офис")]
         public string Floor { get; set; }
     }
 }

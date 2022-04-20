@@ -1,5 +1,4 @@
 ﻿@model SweetsShop.Models.ViewModels.HomeVM
-
 <div class="container">
     <div class="text-center">
         <button class="btn btn-dark filter-button" data-filter="all">All</button>
@@ -19,25 +18,44 @@
         }
     </div>
 </div>
-
-@section Scripts{
+@section Scripts
+{
     <script>
-        $(document).ready(function(){
-            $(".filter-button").click(function(){
+        document.getElementById("count_5").value = getSavedValue("count_5");
+        $(document).ready(function () {
+            $(".filter-button").click(function () {
                 var value = $(this).attr('data-filter');
-                if(value == "all")
-                {
+                if (value == "all") {
                     $('.filter').show('1000');
                 }
-                else
-                {
-                    $(".filter").not('.'+value).hide('3000');
-                    $('.filter').filter('.'+value).show('3000');
-            
+                else {
+                    $(".filter").not('.' + value).hide('3000');
+                    $('.filter').filter('.' + value).show('3000');
+
                 }
             });
         });
+        function plusCount(count) {
+            var kol = document.getElementById(String(count));
+            if (parseInt(kol.value) < 99) kol.value = String(parseInt(getSavedValue(count)) + 1);
+        }
+        function minusCount(count) {
+            var kol = document.getElementById(String(count));
+            if (parseInt(kol.value) > 0) kol.value = String(parseInt(getSavedValue(count)) - 1);
+        }
+        function saveValue(name) {
+            var e = document.getElementById(String(name));
+            var id = e.id;
+            var val = e.value;
+            localStorage.setItem(id, val);
+        }
+        function getSavedValue(v) {
+            if (localStorage.getItem(v) === null) {
+                return "0";
+            }
+            var kol = localStorage.getItem(v);
+            return localStorage.getItem(v);
+        }
     </script>
 }
-
 
