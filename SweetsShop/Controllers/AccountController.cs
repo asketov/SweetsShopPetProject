@@ -28,25 +28,22 @@ namespace SweetsShop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            AccountVM AccountVM = new AccountVM()
-            {
-                User = await _db.Users
-                    .Include(u => u.Role)
-                    .FirstOrDefaultAsync(u => u.Email == User.Identity.Name),
-                AddressModel = new AddressModel()
-            };
-            return View(AccountVM);
+
+            User user = await _db.Users
+                .Include(u => u.Role).Include(u => u.AddressModel)
+                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            return View(user);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddAddress(AccountVM model)
+        public async Task<IActionResult> AddAddress(User user)
         {
             if (ModelState.IsValid)
             {
-                User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-                user.Address = model.AddressModel.City + " " + model.AddressModel.District + " " + model.AddressModel.Street + " "
-                               + model.AddressModel.House + " дом " + model.AddressModel.Housing + " корпус " + model.AddressModel.Entrance + " подъезд "
-                               + model.AddressModel.Floor + " этаж " + model.AddressModel.Flat + "кв/офис";
+                user.Address = user.AddressModel.City + " " + user.AddressModel.District + " " + user.AddressModel.Street + " "
+                               + user.AddressModel.House + " дом " + user.AddressModel.Housing + " корпус " + user.AddressModel.Entrance + " подъезд "
+                               + user.AddressModel.Floor + " этаж " + user.AddressModel.Flat + "кв/офис";
+                await _db.AddAsync(user.AddressModel);
                 _db.Update(user);
                 await _db.SaveChangesAsync();
             }

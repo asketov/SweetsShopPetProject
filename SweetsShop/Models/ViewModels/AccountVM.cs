@@ -9,7 +9,6 @@ namespace SweetsShop.Models.ViewModels
 {
     public class AccountVM
     {
-       public AddressModel AddressModel { get; set; }
-       public User User { get; set; }
+        public User User { get; set; }
     }
 }

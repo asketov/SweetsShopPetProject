@@ -1,23 +1,23 @@
-﻿@model SweetsShop.Models.ViewModels.AccountVM
+﻿@model SweetsShop.Models.Client.User
 <div class="border p-3">
         <div class="row">
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="User.Email"></label>
+                        <label asp-for="Email"></label>
                     </div>
                     <div class="col-6">
-                        <input asp-for="User.Email" disabled class="form-control"/>
+                        <input asp-for="Email" disabled class="form-control"/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="User.Address"></label>
+                        <label asp-for="Address"></label>
                     </div>
-                    @if (Model.User.Address != null)
+                    @if (Model.Address != null)
                     {
                         <div class="col-6 Address">
-                            <textarea style="resize: none;" disabled asp-for="User.Address" class="form-control"></textarea>
+                            <textarea style="resize: none;" disabled asp-for="Address" class="form-control"></textarea>
                         </div>
                         <div class="col-2 pl-0 plusAddress">
                             <button type="button" style="box-shadow: none;" class="btn btn-primary">
@@ -63,12 +63,12 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="User.Phone"></label>
+                        <label asp-for="Phone"></label>
                     </div>
-                    @if (Model.User.Phone != null)
+                    @if (Model.Phone != null)
                     {
                         <div class="col-6 Phone">
-                            <input disabled asp-for="User.Phone" class="form-control"/>
+                            <input disabled asp-for="Phone" class="form-control"/>
                         </div>
                         <div class="col-2 pl-0 plusPhone">
                             <button type="button" style="box-shadow: none;" class="btn btn-primary">
@@ -88,8 +88,8 @@
                     <div class="col-6 AddPhone" style="display: none;">
                         <form method="post">
                         <div class="row">
-                            <input type="text" asp-for="User.Phone" placeholder="Телефон *" class="form-control col-12"/>
-                            <span asp-validation-for="User.Phone" class="text-danger"></span>
+                            <input type="text" asp-for="Phone" placeholder="Телефон *" class="form-control col-12"/>
+                            <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
                         <div class="row pt-1">
                             <button type="button" style="box-shadow: none;" class="btn btn-primary backAddPhone col-6">

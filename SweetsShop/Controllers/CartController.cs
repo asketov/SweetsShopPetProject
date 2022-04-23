@@ -50,7 +50,10 @@ namespace SweetsShop.Controllers
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
 
             }
-            shoppingCartList.Remove(shoppingCartList.FirstOrDefault(u => u.ProductId == id));
+
+            var item = shoppingCartList.FirstOrDefault(u => u.ProductId == id);
+            if (item.Count > 1) item.Count--;
+            else shoppingCartList.Remove(shoppingCartList.FirstOrDefault(u => u.ProductId == id));
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             return RedirectToAction(nameof(Index));
         }

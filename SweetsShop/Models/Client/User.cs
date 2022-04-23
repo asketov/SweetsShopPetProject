@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SweetsShop.Models.Authorization;
 
 namespace SweetsShop.Models.Client
 {
@@ -21,5 +22,9 @@ namespace SweetsShop.Models.Client
 
         [ForeignKey("RoleId")] 
         public virtual Role Role { get; set; }
+        public int? AddressId { get; set; }
+
+        [ForeignKey("AddressId")]
+        public virtual AddressModel AddressModel { get; set; }
     }
 }

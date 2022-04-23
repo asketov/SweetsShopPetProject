@@ -9,6 +9,8 @@ namespace SweetsShop.Models.Authorization
 {
     public class AddressModel
     {
+        [Key]
+        public int Id { get; set; }
         [Required(ErrorMessage = "Введите город")]
         [StringLength(50)]
         public string City { get; set; }
@@ -20,15 +22,15 @@ namespace SweetsShop.Models.Authorization
         public string Street { get; set; }
         [Required(ErrorMessage = "Введите дом")]
         [StringLength(50)]
-        public string House { get; set; }
+        public string? House { get; set; }
         [StringLength(50)]
-        public string Housing { get; set; }
+        public string? Housing { get; set; }
         [StringLength(50)]
-        public string Entrance { get; set; }
+        public string? Entrance { get; set; }
         [StringLength(50)]
         [Required(ErrorMessage = "Введите квартиру или офис")]
         public string Flat { get; set; }
         [StringLength(50)]
-        public string Floor { get; set; }
+        public string? Floor { get; set; }
     }
 }

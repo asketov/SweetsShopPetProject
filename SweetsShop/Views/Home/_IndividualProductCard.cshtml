@@ -3,7 +3,8 @@
 <div class="col-lg-4 col-md-6 pb-4 filter @Model.Category.Name.Replace(' ','_')">
     <!-- Card-->
     <form method="post">
-        <div class="card bg-white rounded shadow-sm" style="border:1px solid #222">
+        <input name="url" value="@Url.Action()" hidden/>
+        <div class="card bg-white rounded shadow-sm" style="border: 1px solid #222">
             <div class="card-body px-3 pt-3 pb-1 row">
                 <div class="col-7"><label class="float-left">@Model.Name</label></div>
                 <div class="col-5"><label class="float-right"><span class="text-info h5">@Model.Price100g rub</span> / 100g</label> </div>
@@ -11,18 +12,19 @@
             <img class="card-img-top img-fluid d-block mx-auto mb-3" src="@WC.ImagePath@Model.Image" alt="Card image cap">
             <div class="card-body p-1 px-3 row">
                 <div class="col-12">
-                    <span class="badge p-2 border w-100" style="background-color:lavenderblush">@Model.Category.Name</span>
+                    <span class="badge p-2 border w-100" style="background-color: lavenderblush">@Model.Category.Name</span>
                 </div>
-                <div class="col-12 pt-2" style="font-size:13px; text-align:justify" >
+                <div class="col-12 pt-2" style="font-size: 13px; text-align: justify">
                     <p> @Model.ShortDescription</p>
                 </div>
                 <div class="col-12 m-0 row">
-                    <button type="button" asp-route-id="@Model.Id" asp-action="RemoveFromCart" onclick="minusCount('count_@Model.Id');saveValue('count_@Model.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="minus col-4 btn">
+                    <button type="submit" asp-route-id="@Model.Id" asp-action="RemoveFromCart" onclick="minusCount('count_@Model.Id');saveValue('count_@Model.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="minus col-4 btn">
                         <i class="fa-solid fa-circle-minus"></i>
                     </button>
-                    <input value="0" disabled class="col-4" id="count_@Model.Id" style="background-color: rgba(0,0,0,0); border: none;  font-size: 25px; text-align: center;" type="text"/>
+                    <input value="0" disabled class="col-4" id="count_@Model.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
                     <script>
                         document.getElementById("count_@Model.Id").value = getSavedValue("count_@Model.Id");
+
                         function getSavedValue(v) {
                             if (localStorage.getItem(v) === null) {
                                 return "0";
@@ -30,20 +32,15 @@
                             return localStorage.getItem(v);
                         }
                     </script>
-                    <button type="submit" asp-route-id="@Model.Id" asp-action="Details" onclick="plusCount('count_@Model.Id');saveValue('count_@Model.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="plus col-4 btn">
+                    <button type="submit" asp-route-id="@Model.Id" asp-action="AddToCart" onclick="plusCount('count_@Model.Id');saveValue('count_@Model.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="plus col-4 btn">
                         <i class="fa-solid fa-circle-plus"></i>
                     </button>
                 </div>
                 <div class="col-12 p-1">
-                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-dark form-control btn-sm p-2" style="height:40px">View Details</a>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-dark form-control btn-sm p-2" style="height: 40px">Подробности</a>
                 </div>
             </div>
         </div>
     </form>
 </div>
 
-@section Scripts
-{
-    
-    
-}

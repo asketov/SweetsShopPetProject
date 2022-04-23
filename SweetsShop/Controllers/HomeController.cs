@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SweetsShop.Additionaly;
 using SweetsShop.Data;
@@ -56,20 +59,26 @@ namespace SweetsShop.Controllers
             }
             return View(DetailsVM);
         }
-        [HttpPost, ActionName("Details")]
-        public IActionResult DetailsPost(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToCart(int id, string url)
         {
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
-                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() > 0)
+                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Any() != false)
             {
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
-            shoppingCartList.Add(new ShoppingCart { ProductId = id });
+
+            var item =  shoppingCartList.SingleOrDefault(u => u.ProductId == id);
+            if (item == null) shoppingCartList.Add(new ShoppingCart {ProductId = id, Count = 1 });
+            else item.Count++;
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
-            return RedirectToAction(nameof(Index));
+            return Redirect(url);
         }
-        public IActionResult RemoveFromCart(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveFromCart(int id, string url)
         {
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
@@ -78,12 +87,13 @@ namespace SweetsShop.Controllers
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
             var itemToRemove = shoppingCartList.SingleOrDefault(r => r.ProductId == id);
-            if (itemToRemove != null)
+            if (itemToRemove != null && itemToRemove.Count > 1) itemToRemove.Count--;
+            else
             {
                 shoppingCartList.Remove(itemToRemove);
             }
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
-            return RedirectToAction(nameof(Index));
+            return Redirect(url);
         }
         public IActionResult Privacy()
         {

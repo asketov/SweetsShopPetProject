@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SweetsShop.Models;
+using SweetsShop.Models.Authorization;
 using SweetsShop.Models.Client;
 
 namespace SweetsShop.Data
@@ -19,5 +20,6 @@ namespace SweetsShop.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AddressModel> AddressModels { get; set; }
     }
 }
