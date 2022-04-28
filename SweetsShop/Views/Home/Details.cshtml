@@ -18,7 +18,18 @@
                     <div class="container rounded p-2">
                         <div class="row">
                             <div class="col-12 col-lg-4 p-2 text-center">
-                                <img src="@WC.ImagePath@Model.Product.Image" width="100%" class="rounded"/>
+                                <div class="col-12">
+                                    <img src="@WC.ImagePath@Model.Product.Image" width="100%" class="rounded"/>
+                                </div>
+                                    <div class="col-12 pt-1 row">
+                                    <button type="submit" id="@Model.Product.Id" asp-route-id="@Model.Product.Id" asp-action="RemoveFromCart" onclick="minusCount('count_@Model.Product.Id');saveValue('count_@Model.Product.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="minus col-4 btn">
+                                        <i class="fa-solid fa-circle-minus"></i>
+                                    </button>
+                                    <input value="0" disabled class="col-4" id="count_@Model.Product.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
+                                    <button type="submit" id="_@Model.Product.Id" asp-route-id="@Model.Product.Id" asp-action="AddToCart" onclick="plusCount('count_@Model.Product.Id');saveValue('count_@Model.Product.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="plus col-4 btn">
+                                        <i class="fa-solid fa-circle-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="col-12 col-lg-8">
 
@@ -31,29 +42,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 m-0 row">
-                    <button type="submit" asp-route-id="@Model.Product.Id" asp-action="RemoveFromCart" onclick="minusCount('count_@Model.Product.Id');saveValue('count_@Model.Product.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="minus col-4 btn">
-                        <i class="fa-solid fa-circle-minus"></i>
-                    </button>
-                    <input value="0" disabled class="col-4" id="count_@Model.Product.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
-                    <button type="submit" asp-route-id="@Model.Product.Id" asp-action="AddToCart" onclick="plusCount('count_@Model.Product.Id');saveValue('count_@Model.Product.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="plus col-4 btn">
-                        <i class="fa-solid fa-circle-plus"></i>
-                    </button>
-                </div>
+                
                 <div class="card-footer bg-dark">
                     <div class="row">
                         <div class="col-12 col-md-6 pb-1 ">
-                            <a asp-action="Index" class="btn btn-success btn-square form-control btn-lg" style="height: 50px;">Back to List</a>
+                            <a asp-action="Index" class="btn btn-success btn-square form-control btn-lg" style="height: 50px;">Назад</a>
                         </div>
                         <div class="col-12 col-md-6 ">
-                            @if (Model.ExistsInCart)
-                            {
-                                <a asp-action="RemoveFromCart" asp-route-id="@Model.Product.Id" class="btn btn-warning btn-square form-control btn-lg" style="height: 50px;">Remove from cart</a>
-                            }
-                            else
-                            {
-                                <button type="submit" class="btn btn-info form-control btn-lg" style="height: 50px;">Add to Cart</button>
-                            }
+                            <a asp-controller="Cart" asp-action="Index" class="btn btn-warning btn-square form-control btn-lg" style="height: 50px;">Перейти в корзину</a>
                         </div>
                     </div>
                 </div>
@@ -65,14 +61,36 @@
 @section Scripts
 {
     <script>
+        var button1 = document.getElementById("@Model.Product.Id");
+        var button2 = document.getElementById("_@Model.Product.Id");
         document.getElementById("count_@Model.Product.Id").value = getSavedValue("count_@Model.Product.Id");
         function plusCount(count) {
+            var sum = parseInt(getSavedValue("sum"));
             var kol = document.getElementById(String(count));
+            sum+=@Model.Product.Price100g;
+            localStorage.setItem("sum", sum);
+            if (parseInt(kol.value) >= 1) {
+                button1.type = "button";
+                button2.type = "button";
+            }
+            if (parseInt(kol.value) == 0) {button1.type = "submit"; button2.type = "submit";}
             if (parseInt(kol.value) < 99) kol.value = String(parseInt(getSavedValue(count)) + 1);
+            var sum1 = document.getElementById("sum");
+            sum1.value = localStorage.getItem("sum") + " rub";
         }
         function minusCount(count) {
+            var sum = parseInt(getSavedValue("sum"));
             var kol = document.getElementById(String(count));
+            if(sum>0 && parseInt(kol.value)!=0)  sum-=@Model.Product.Price100g;
+            localStorage.setItem("sum", sum);
+            if (parseInt(kol.value) == 1) {
+                button1.type = "submit";
+                button2.type = "submit";
+            }
+            if (parseInt(kol.value) == 0) {button1.type = "button"; button2.type = "button";}
             if (parseInt(kol.value) > 0) kol.value = String(parseInt(getSavedValue(count)) - 1);
+            var sum1 = document.getElementById("sum");
+            sum1.value = localStorage.getItem("sum") + " rub";
         }
         function saveValue(name) {
             var e = document.getElementById(String(name));
@@ -84,7 +102,6 @@
             if (localStorage.getItem(v) === null) {
                 return "0";
             }
-            var kol = localStorage.getItem(v);
             return localStorage.getItem(v);
         }
     </script>

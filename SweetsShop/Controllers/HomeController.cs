@@ -47,16 +47,8 @@ namespace SweetsShop.Controllers
             DetailsVM DetailsVM = new DetailsVM()
             {
                 Product = _db.Products.Include(u => u.Category)
-                    .Where(u => u.Id == id).FirstOrDefault(),
-                ExistsInCart = false
+                    .Where(u => u.Id == id).FirstOrDefault()
             };
-            foreach (var item in shoppingCartList)
-            {
-                if (item.ProductId == id)
-                {
-                    DetailsVM.ExistsInCart = true;
-                }
-            }
             return View(DetailsVM);
         }
         [HttpPost]
@@ -71,8 +63,7 @@ namespace SweetsShop.Controllers
             }
 
             var item =  shoppingCartList.SingleOrDefault(u => u.ProductId == id);
-            if (item == null) shoppingCartList.Add(new ShoppingCart {ProductId = id, Count = 1 });
-            else item.Count++;
+            if(item==null) shoppingCartList.Add(new ShoppingCart {ProductId = id });
             HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             return Redirect(url);
         }
@@ -87,12 +78,11 @@ namespace SweetsShop.Controllers
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
             var itemToRemove = shoppingCartList.SingleOrDefault(r => r.ProductId == id);
-            if (itemToRemove != null && itemToRemove.Count > 1) itemToRemove.Count--;
-            else
+            if (itemToRemove != null)
             {
                 shoppingCartList.Remove(itemToRemove);
+                HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             }
-            HttpContext.Session.Set(WC.SessionCart, shoppingCartList);
             return Redirect(url);
         }
         public IActionResult Privacy()
