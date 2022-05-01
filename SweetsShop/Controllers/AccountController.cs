@@ -24,7 +24,6 @@ namespace SweetsShop.Controllers
         {
             _db = db;
         }
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -51,16 +50,11 @@ namespace SweetsShop.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhone(AccountVM model)
+        public async Task<IActionResult> AddPhone(User user)
         {
             if (ModelState.IsValid)
             {
-                User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-                if (user.Phone != model.User.Phone || user.Phone == null)
-                {
-                    user.Phone = model.User.Phone;
-                    _db.Update(user);
-                }
+                _db.Update(user);
                 await _db.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));

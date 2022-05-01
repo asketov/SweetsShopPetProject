@@ -1,0 +1,82 @@
+﻿@model SweetsShop.Models.ViewModels.RegistrationVM
+
+
+<form method="post">
+    <div class="backgroundWhiteBorder">
+        <div class="container row justify-content-center">
+            <div class="col-8">
+                <div class="card mt-4">
+                    <div class="card-header bg-dark text-light ml-0 row container">
+                        <div class="col-6">
+                            <a asp-action="Index" class="btn btn-outline-info btn-sm">Назад</a>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Продолжить покупки</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="p-1">
+                                    <b><i>Адрес:</i></b>
+                                    <div class="row pt-1">
+                                        <input type="text" asp-for="AddressModel.City" placeholder="Город *" class="form-control col-12"/>
+                                        <input type="text" asp-for="AddressModel.District" placeholder="Район *" class="form-control col-12"/>
+                                        <input type="text" asp-for="AddressModel.Street" placeholder="Улица *" class="form-control col-12"/>
+                                    </div>
+                                    <div class="row">
+                                        <input type="text" asp-for="AddressModel.House" placeholder="Дом *" class="form-control col-5"/>
+                                        <input type="text" asp-for="AddressModel.Housing" placeholder="Корпус" class="form-control col-3"/>
+                                        <input type="text" asp-for="AddressModel.Entrance" placeholder="Подъезд" class="form-control col-4"/>
+                                    </div>
+                                    <div class="row">
+                                        <input type="text" asp-for="AddressModel.Floor" placeholder="Этаж" class="form-control col-6"/>
+                                        <input type="text" asp-for="AddressModel.Flat" placeholder="Кв-ра/Офис *" class="form-control col-6"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-1">
+                                    <b><i>Телефон:</i></b>
+                                    <div class="row pt-1">
+                                        <input asp-for="Phone" class="form-control"/>
+                                    </div>
+                                    <b><i>Комментарий:</i></b>
+                                    <div class="row pt-1">
+                                        <textarea style="resize: none; height: 124px;" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row justify-content-center">
+                                    <div class="col-3">
+                                    <input class="form-check-input" type="checkbox" id="inlineFormCheck">
+                                    <label class="form-check-label" for="inlineFormCheck">
+                                        Запомнить адрес
+                                    </label>
+                                    </div>
+                                    <div class="col-4">
+                                    <input class="form-check-input" type="checkbox" id="inlineFormCheck2">
+                                    <label class="form-check-label" for="inlineFormCheck2">
+                                        Запомнить телефон
+                                    </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-6 col-md-3 offset-md-9">
+                                <button type="submit" class="btn btn-success form-control ">
+                                    <span>Заказать</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

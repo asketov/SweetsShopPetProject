@@ -22,11 +22,11 @@
                                     <img src="@WC.ImagePath@Model.Product.Image" width="100%" class="rounded"/>
                                 </div>
                                     <div class="col-12 pt-1 row">
-                                    <button type="submit" id="@Model.Product.Id" asp-route-id="@Model.Product.Id" asp-action="RemoveFromCart" onclick="minusCount('count_@Model.Product.Id');saveValue('count_@Model.Product.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="minus col-4 btn">
+                                    <button type="submit" id="button1_@Model.Product.Id" asp-route-id="@Model.Product.Id" asp-action="RemoveFromCart" onclick="minusCount('count_@Model.Product.Id',this,'button2_@Model.Product.Id',@Model.Product.Price100g);saveValue('count_@Model.Product.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="col-4 btn">
                                         <i class="fa-solid fa-circle-minus"></i>
                                     </button>
                                     <input value="0" disabled class="col-4" id="count_@Model.Product.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
-                                    <button type="submit" id="_@Model.Product.Id" asp-route-id="@Model.Product.Id" asp-action="AddToCart" onclick="plusCount('count_@Model.Product.Id');saveValue('count_@Model.Product.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="plus col-4 btn">
+                                    <button type="submit" id="button2_@Model.Product.Id" asp-route-id="@Model.Product.Id" asp-action="AddToCart" onclick="plusCount('count_@Model.Product.Id',this,'button1_@Model.Product.Id',@Model.Product.Price100g);saveValue('count_@Model.Product.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="col-4 btn">
                                         <i class="fa-solid fa-circle-plus"></i>
                                     </button>
                                 </div>
@@ -61,48 +61,6 @@
 @section Scripts
 {
     <script>
-        var button1 = document.getElementById("@Model.Product.Id");
-        var button2 = document.getElementById("_@Model.Product.Id");
-        document.getElementById("count_@Model.Product.Id").value = getSavedValue("count_@Model.Product.Id");
-        function plusCount(count) {
-            var sum = parseInt(getSavedValue("sum"));
-            var kol = document.getElementById(String(count));
-            sum+=@Model.Product.Price100g;
-            localStorage.setItem("sum", sum);
-            if (parseInt(kol.value) >= 1) {
-                button1.type = "button";
-                button2.type = "button";
-            }
-            if (parseInt(kol.value) == 0) {button1.type = "submit"; button2.type = "submit";}
-            if (parseInt(kol.value) < 99) kol.value = String(parseInt(getSavedValue(count)) + 1);
-            var sum1 = document.getElementById("sum");
-            sum1.value = localStorage.getItem("sum") + " rub";
-        }
-        function minusCount(count) {
-            var sum = parseInt(getSavedValue("sum"));
-            var kol = document.getElementById(String(count));
-            if(sum>0 && parseInt(kol.value)!=0)  sum-=@Model.Product.Price100g;
-            localStorage.setItem("sum", sum);
-            if (parseInt(kol.value) == 1) {
-                button1.type = "submit";
-                button2.type = "submit";
-            }
-            if (parseInt(kol.value) == 0) {button1.type = "button"; button2.type = "button";}
-            if (parseInt(kol.value) > 0) kol.value = String(parseInt(getSavedValue(count)) - 1);
-            var sum1 = document.getElementById("sum");
-            sum1.value = localStorage.getItem("sum") + " rub";
-        }
-        function saveValue(name) {
-            var e = document.getElementById(String(name));
-            var id = e.id;
-            var val = e.value;
-            localStorage.setItem(id, val);
-        }
-        function getSavedValue(v) {
-            if (localStorage.getItem(v) === null) {
-                return "0";
-            }
-            return localStorage.getItem(v);
-        }
+       document.getElementById("count_@Model.Product.Id").value = getSavedValue("count_@Model.Product.Id");
     </script>
 }
