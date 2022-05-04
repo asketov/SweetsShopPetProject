@@ -1,9 +1,11 @@
-﻿@model SweetsShop.Models.ViewModels.RegistrationVM
+﻿@using System.Collections.Specialized
+@model SweetsShop.Models.ViewModels.RegistrationVM
 
 
 <form method="post">
     <div class="backgroundWhiteBorder">
         <div class="container row justify-content-center">
+            <input hidden asp-for="AddressModel.Id"/>
             <div class="col-8">
                 <div class="card mt-4">
                     <div class="card-header bg-dark text-light ml-0 row container">
@@ -39,30 +41,64 @@
                                 <div class="p-1">
                                     <b><i>Телефон:</i></b>
                                     <div class="row pt-1">
-                                        <input asp-for="Phone" class="form-control"/>
+                                        <input placeholder="Телефон *"  asp-for="Phone" class="form-control"/>
                                     </div>
                                     <b><i>Комментарий:</i></b>
                                     <div class="row pt-1">
-                                        <textarea style="resize: none; height: 124px;" class="form-control"></textarea>
+                                        <textarea asp-for="Comment" style="resize: none; height: 124px;" class="form-control"></textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="row justify-content-center">
                                     <div class="col-3">
-                                    <input class="form-check-input" type="checkbox" id="inlineFormCheck">
-                                    <label class="form-check-label" for="inlineFormCheck">
-                                        Запомнить адрес
-                                    </label>
+                                        <input asp-for="SaveAddress" class="form-check-input" type="checkbox" id="inlineFormCheck">
+                                        <label class="form-check-label" for="inlineFormCheck">
+                                            Запомнить адрес
+                                        </label>
                                     </div>
                                     <div class="col-4">
-                                    <input class="form-check-input" type="checkbox" id="inlineFormCheck2">
-                                    <label class="form-check-label" for="inlineFormCheck2">
-                                        Запомнить телефон
-                                    </label>
+                                        <input asp-for="SavePhone" class="form-check-input" type="checkbox" id="inlineFormCheck2">
+                                        <label class="form-check-label" for="inlineFormCheck2">
+                                            Запомнить телефон
+                                        </label>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        @for (int i = 0; i < Model.prodList.Count; i++)
+                        {
+                            <input id="@Model.prodList[i].ProductId" asp-for="prodList[i].Count" hidden/>
+                            <script>
+                                var Count = document.getElementById(@Model.prodList[i].ProductId);
+                                Count.value = getSavedValue("count_@Model.prodList[i].ProductId");
+
+                                function getSavedValue(v) {
+                                    if (localStorage.getItem(v) === null) {
+                                        return "0";
+                                    }
+                                    return localStorage.getItem(v);
+                                }
+                            </script>
+                            <input asp-for="prodList[i].ProductId" value="@Model.prodList[i].ProductId" hidden/>
+                        }
+                        <input id="sumOrder" asp-for="Sum" hidden/>
+                        <script>
+                            var Sum = document.getElementById("sumOrder");
+                            Sum.value = getSavedValue("sum");
+
+                            function getSavedValue(v) {
+                                if (localStorage.getItem(v) === null) {
+                                    return "0";
+                                }
+                                return localStorage.getItem(v);
+                            }
+                        </script>
+                        <div class="col-12 row">
+                            <b><i style="font-size: 9px;">*Оплата происходит наличными или картой курьеру</i></b>
+                        </div>
+                        <div class="col-12 row">
+                            <b><i style="font-size: 9px;">*Нажимая запомнить вы соглашаетесь с политикой персональных данных</i></b>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -80,3 +116,6 @@
     </div>
 </form>
 
+@section Scripts{
+    @{ <partial name="_ValidationScriptsPartial" />}
+}

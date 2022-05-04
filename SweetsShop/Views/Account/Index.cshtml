@@ -1,53 +1,62 @@
-﻿@model SweetsShop.Models.Client.User
-<div class="border p-3">
-        <div class="row">
-            <div class="col-8">
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Email"></label>
-                    </div>
-                    <div class="col-6">
-                        <input asp-for="Email" disabled class="form-control"/>
-                    </div>
+﻿@model SweetsShop.Models.ViewModels.AccountVM
+<div class="pt-3 row justify-content-center">
+    <div style="width: 600px;" class="pt-3 border">
+        <div class="pl-5">
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="Email"></label>
                 </div>
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Address"></label>
+                <div class="col-6">
+                    <input asp-for="Email" disabled class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="Address"></label>
+                </div>
+                @if (Model.Address != null)
+                {
+                    <div class="col-6 Address">
+                        <textarea style="resize: none;" disabled asp-for="Address" class="form-control"></textarea>
                     </div>
-                    @if (Model.Address != null)
-                    {
-                        <div class="col-6 Address">
-                            <textarea style="resize: none;" disabled asp-for="Address" class="form-control"></textarea>
-                        </div>
-                        <div class="col-2 pl-0 plusAddress">
-                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-8 plusAddress">
-                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </div>
-                    }
-                    <div class="col-6 AddAddress" style="display: none;">
-                        <form method="post">
-                            <div class="row">
-                            <input type="text" asp-for="AddressModel.City" placeholder="Город *" class="form-control col-12"/>
-                            <input type="text" asp-for="AddressModel.District" placeholder="Район *" class="form-control col-12"/>
-                            <input type="text" asp-for="AddressModel.Street" placeholder="Улица *" class="form-control col-12"/>
+                    <div class="pr-1 plusAddress">
+                        <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                    <div class="deleteAddress">
+                        <a asp-action="RemoveAddress" asp-route-id="@Model.AddressModel.Id" style="box-shadow: none;" class="btn btn-danger">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-8 plusAddress">
+                        <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                }
+                <div class="col-8 AddAddress" style="display: none;">
+                    <form method="post">
+                        @if (Model.AddressModel != null)
+                        {
+                            <input hidden asp-for="AddressModel.Id"/>
+                        }
+                        <div class="row">
+                            <input type="text" required asp-for="AddressModel.City" placeholder="Город *" class="form-control col-12"/>
+                            <input type="text" required asp-for="AddressModel.District" placeholder="Район *" class="form-control col-12"/>
+                            <input type="text" required asp-for="AddressModel.Street" placeholder="Улица *" class="form-control col-12"/>
                         </div>
                         <div class="row">
-                            <input type="text" asp-for="AddressModel.House" placeholder="Дом *" class="form-control col-5"/>
+                            <input type="text" required asp-for="AddressModel.House" placeholder="Дом *" class="form-control col-5"/>
                             <input type="text" asp-for="AddressModel.Housing" placeholder="Корпус" class="form-control col-3"/>
                             <input type="text" asp-for="AddressModel.Entrance" placeholder="Подъезд" class="form-control col-4"/>
                         </div>
                         <div class="row">
                             <input type="text" asp-for="AddressModel.Floor" placeholder="Этаж" class="form-control col-6"/>
-                            <input type="text" asp-for="AddressModel.Flat" placeholder="Кв-ра/Офис *" class="form-control col-6"/>
+                            <input type="text" required asp-for="AddressModel.Flat" placeholder="Кв-ра/Офис *" class="form-control col-6"/>
                         </div>
                         <div class="row pt-1">
                             <button type="button" style="box-shadow: none;" class="btn btn-primary backAddAddress col-6">
@@ -57,37 +66,42 @@
                                 <i class="fa-solid fa-circle-check"></i>
                             </button>
                         </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Phone"></label>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="Phone"></label>
+                </div>
+                @if (Model.Phone != null)
+                {
+                    <div class="col-6 Phone">
+                        <input disabled asp-for="Phone" class="form-control"/>
                     </div>
-                    @if (Model.Phone != null)
-                    {
-                        <div class="col-6 Phone">
-                            <input disabled asp-for="Phone" class="form-control"/>
-                        </div>
-                        <div class="col-2 pl-0 plusPhone">
-                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                        </div>
-                        
-                    }
-                    else
-                    {
-                        <div class="col-8 plusPhone">
-                            <button type="button" style="box-shadow: none;" class="btn btn-primary">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </div>
-                    }
-                    <div class="col-6 AddPhone" style="display: none;">
-                        <form method="post">
+                    <div class="pr-1 plusPhone">
+                        <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                    <div class="deletePhone">
+                        <a asp-action="RemovePhone" style="box-shadow: none;" class="btn btn-danger">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="col-8 plusPhone">
+                        <button type="button" style="box-shadow: none;" class="btn btn-primary">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                }
+                <div class="col-8 AddPhone" style="display: none;">
+                    <form method="post">
                         <div class="row">
-                            <input type="text" asp-for="Phone" placeholder="Телефон *" class="form-control col-12"/>
+                            <input required type="text" asp-for="Phone" placeholder="Телефон *" class="form-control col-12"/>
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
                         <div class="row pt-1">
@@ -98,19 +112,18 @@
                                 <i class="fa-solid fa-circle-check"></i>
                             </button>
                         </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
-                <div class="form-group row">
-                    <div class="col-4 offset-5 row">
-                        <div class="col">
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-success w-100"><i class="fas fa-sign-out-alt"></i></a>
-                        </div>
-                    </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-2 offset-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-success w-100"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
 @section Scripts
 {
@@ -120,21 +133,25 @@
                 $('.AddAddress').show('1000');
                 $('.plusAddress').hide();
                 $('.Address').hide();
+                $('.deleteAddress').hide();
             });
             $(".plusPhone").click(function(){
                 $('.AddPhone').show('1000');
                 $('.plusPhone').hide();
                 $('.Phone').hide();
+                $('.deletePhone').hide();
             });
             $(".backAddAddress").click(function(){
                 $('.AddAddress').hide();
                 $('.plusAddress').show();
                 $('.Address').show();
+                $('.deleteAddress').show();
             });
             $(".backAddPhone").click(function(){
                 $('.AddPhone').hide();
                 $('.plusPhone').show();
                 $('.Phone').show();
+                $('.deletePhone').show();
             });
         });
     </script>

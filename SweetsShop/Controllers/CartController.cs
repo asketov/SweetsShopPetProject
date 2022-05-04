@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using SweetsShop.Additionaly;
 using SweetsShop.Data;
 using SweetsShop.Models;
+using SweetsShop.Models.Authorization;
 using SweetsShop.Models.Client;
 using SweetsShop.Models.ViewModels;
 
@@ -43,7 +44,6 @@ namespace SweetsShop.Controllers
             else return RedirectToAction("Index", "Home");
         }
 
-        [HttpPost]
         public IActionResult Remove(int id)
         {
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
@@ -62,13 +62,47 @@ namespace SweetsShop.Controllers
         [Authorize]
         public async Task<IActionResult> RegistrationOrder()
         {
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             User user = await _db.Users.Include(u=>u.AddressModel).FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
+                HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Any() != false)
+            {
+                //session exists
+                shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
+
+            }
             RegistrationVM registrationVM = new RegistrationVM()
             {
                 Phone = user.Phone,
-                AddressModel = user.AddressModel
+                AddressModel = user.AddressModel,
+                prodList = shoppingCartList
             };
             return View(registrationVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegistrationOrder(RegistrationVM RegistrationVM)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _db.Users.Include(u => u.AddressModel)
+                    .FirstOrDefaultAsync(u => User.Identity.Name == u.Email);
+                if (RegistrationVM.SaveAddress && (user.AddressModel.Id != RegistrationVM.AddressModel.Id ||
+                                                   RegistrationVM.AddressModel.Id == 0))
+                    user.AddressId = RegistrationVM.AddressModel.Id;
+                if (RegistrationVM.SavePhone && user.Phone != RegistrationVM.Phone) user.Phone = RegistrationVM.Phone;
+                    _db.Update(user);
+                    FullOrder fullOrder = new FullOrder()
+                    {
+                        Phone = RegistrationVM.Phone,
+                        AddressId = RegistrationVM.AddressModel.Id,
+
+                    };
+                await _db.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            return View(RegistrationVM);
         }
     }
 }

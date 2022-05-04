@@ -25,37 +25,73 @@ namespace SweetsShop.Controllers
             _db = db;
         }
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
 
-            User user = await _db.Users
-                .Include(u => u.Role).Include(u => u.AddressModel)
+            User user = await _db.Users.Include(u => u.AddressModel)
                 .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-            return View(user);
+            AccountVM AccountVM = new AccountVM()
+            {
+                Email = user.Email,
+                Address = user.Address,
+                AddressModel = user.AddressModel,
+                Phone = user.Phone
+            };
+            return View(AccountVM);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddAddress(User user)
+        public async Task<IActionResult> AddAddress(AccountVM AccountVM)
         {
             if (ModelState.IsValid)
             {
-                user.Address = user.AddressModel.City + " " + user.AddressModel.District + " " + user.AddressModel.Street + " "
-                               + user.AddressModel.House + " дом " + user.AddressModel.Housing + " корпус " + user.AddressModel.Entrance + " подъезд "
-                               + user.AddressModel.Floor + " этаж " + user.AddressModel.Flat + "кв/офис";
-                await _db.AddAsync(user.AddressModel);
-                _db.Update(user);
-                await _db.SaveChangesAsync();
+                User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                AccountVM.Address = AccountVM.AddressModel.AddressModelToString();
+                if (user.Address == null || user.Address != AccountVM.Address)
+                {
+                    user.Address = AccountVM.Address;
+                    if(AccountVM.AddressModel.Id!=0) _db.AddressModels.Update(AccountVM.AddressModel);
+                    else user.AddressModel = AccountVM.AddressModel;
+                    _db.Update(user);
+                    await _db.SaveChangesAsync();
+                }
             }
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> RemoveAddress(int id)
+        {
+            User user = await _db.Users.Include(u=>u.AddressModel).FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            _db.AddressModels.Remove(user.AddressModel);
+            user.Address = null;
+            _db.Update(user);
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> RemovePhone(int id)
+        {
+            User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            user.Phone = null;
+            _db.Update(user);
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhone(User user)
+        public async Task<IActionResult> AddPhone(AccountVM AccountVM)
         {
             if (ModelState.IsValid)
             {
-                _db.Update(user);
-                await _db.SaveChangesAsync();
+                User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                if (user.Phone == null || user.Phone != AccountVM.Phone)
+                {
+                    user.Phone = AccountVM.Phone;
+                    _db.Update(user);
+                    await _db.SaveChangesAsync();
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -88,13 +124,14 @@ namespace SweetsShop.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl)
         {
+            if(returnUrl != null) ViewBag.returnUrl = returnUrl;
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -105,7 +142,8 @@ namespace SweetsShop.Controllers
                 {
                     await Authenticate(user); // аутентификация
 
-                    return RedirectToAction("Index", "Home");
+                    if (returnUrl == null) return RedirectToAction("Index", "Home");
+                    else Redirect(returnUrl);
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
@@ -125,10 +163,10 @@ namespace SweetsShop.Controllers
             // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string returnUrl)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+            return Redirect(returnUrl);
         }
     }
 }
