@@ -21,5 +21,6 @@ namespace SweetsShop.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<AddressModel> AddressModels { get; set; }
+        public DbSet<FullOrder> Orders { get; set; }
     }
 }

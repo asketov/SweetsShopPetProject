@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SweetsShop.Data;
+using SweetsShop.Services;
+using SweetsShop.Services.Interfaces;
 
 namespace SweetsShop
 {
@@ -31,6 +33,7 @@ namespace SweetsShop
                     Configuration.GetConnectionString("DefaultConnection")
                 ));
             services.AddHttpContextAccessor();
+            services.AddTransient<IEmailService, EmailService>();
             services.AddSession(Options => {
                 Options.IdleTimeout = TimeSpan.FromMinutes(100);
                 Options.Cookie.HttpOnly = true;

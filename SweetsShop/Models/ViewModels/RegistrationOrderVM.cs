@@ -8,11 +8,11 @@ using SweetsShop.Models.Authorization;
 
 namespace SweetsShop.Models.ViewModels
 {
-    public class RegistrationVM
+    public class RegistrationOrderVM
     {
         public AddressModel AddressModel { get; set; }
         [Required(ErrorMessage = "Не указан Телефон")]
-        [StringLength(10)]
+        [StringLength(12)]
         public string Phone { get; set; }
         public bool SaveAddress { get; set; }
         public bool SavePhone { get; set; }

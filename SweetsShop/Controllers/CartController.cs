@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using SweetsShop.Additionaly;
 using SweetsShop.Data;
 using SweetsShop.Models;
-using SweetsShop.Models.Authorization;
 using SweetsShop.Models.Client;
 using SweetsShop.Models.ViewModels;
+using SweetsShop.Services;
+using SweetsShop.Services.Interfaces;
 
 namespace SweetsShop.Controllers
 {
@@ -22,10 +24,12 @@ namespace SweetsShop.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public CartController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        private readonly IEmailService _emailService;
+        public CartController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment,IEmailService emailService)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
+            _emailService = emailService;
         }
         [HttpGet]
         public IActionResult Index()
@@ -62,6 +66,7 @@ namespace SweetsShop.Controllers
         [Authorize]
         public async Task<IActionResult> RegistrationOrder()
         {
+
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             User user = await _db.Users.Include(u=>u.AddressModel).FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&
@@ -71,7 +76,7 @@ namespace SweetsShop.Controllers
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
 
             }
-            RegistrationVM registrationVM = new RegistrationVM()
+            RegistrationOrderVM registrationVM = new RegistrationOrderVM()
             {
                 Phone = user.Phone,
                 AddressModel = user.AddressModel,
@@ -82,24 +87,51 @@ namespace SweetsShop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistrationOrder(RegistrationVM RegistrationVM)
+        public async Task<IActionResult> RegistrationOrder(RegistrationOrderVM RegistrationVM)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid || RegistrationVM.AddressModel.Id==0)
             {
-                User user = await _db.Users.Include(u => u.AddressModel)
+                User user = await _db.Users
                     .FirstOrDefaultAsync(u => User.Identity.Name == u.Email);
-                if (RegistrationVM.SaveAddress && (user.AddressModel.Id != RegistrationVM.AddressModel.Id ||
-                                                   RegistrationVM.AddressModel.Id == 0))
-                    user.AddressId = RegistrationVM.AddressModel.Id;
-                if (RegistrationVM.SavePhone && user.Phone != RegistrationVM.Phone) user.Phone = RegistrationVM.Phone;
-                    _db.Update(user);
-                    FullOrder fullOrder = new FullOrder()
+                var PathToTemplate = _webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString() + "templates"
+                                     + Path.DirectorySeparatorChar.ToString() +
+                                     "Inquiry.html";
+                var subject = "New Inquiry";
+                string HtmlBody = "";
+                using (StreamReader sr = System.IO.File.OpenText(PathToTemplate))
+                {
+                    HtmlBody = sr.ReadToEnd();
+                }
+                string messageBody = string.Format(HtmlBody,
+                    "User",
+                    user.Email,
+                    user.Phone,
+                    RegistrationVM.Sum);
+                await _emailService.SendEmailAsync(User.Identity.Name, subject, HtmlBody);
+                FullOrder fullOrder = new FullOrder()
+                {
+                    Phone = RegistrationVM.Phone,
+                    Sum = RegistrationVM.Sum,
+                    Products = JsonSerializer.Serialize(RegistrationVM.prodList),
+                    DateOrder = DateTime.Now,
+                    Address = RegistrationVM.AddressModel.AddressModelToString(),
+                    Comment = RegistrationVM.Comment,
+                    UserId = user.Id
+                };
+                await _db.Orders.AddAsync(fullOrder);
+                if (RegistrationVM.SaveAddress && fullOrder.Address!=user.Address)
+                {
+                    user.Address = fullOrder.Address;
+                    if(RegistrationVM.AddressModel.Id!=0) _db.Update(RegistrationVM.AddressModel);
+                    else
                     {
-                        Phone = RegistrationVM.Phone,
-                        AddressId = RegistrationVM.AddressModel.Id,
-
-                    };
+                        user.AddressModel = RegistrationVM.AddressModel;
+                    }
+                }
+                if (RegistrationVM.SavePhone) user.Phone = RegistrationVM.Phone;
+                _db.Users.Update(user);
                 await _db.SaveChangesAsync();
+                HttpContext.Session.Clear();
                 return RedirectToAction("Index", "Home");
             }
             return View(RegistrationVM);
