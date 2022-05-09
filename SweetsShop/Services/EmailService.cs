@@ -1,6 +1,9 @@
-﻿using MimeKit;
+﻿using System.IO;
+using MimeKit;
 using MailKit.Net.Smtp;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using SweetsShop.Models.Client;
 using SweetsShop.Services.Interfaces;
 
 namespace SweetsShop.Services
@@ -27,6 +30,20 @@ namespace SweetsShop.Services
 
                 await client.DisconnectAsync(true);
             }
+        }
+
+        public async Task SendOrderToEmailAsync(string email,string WebRootPath)
+        {
+            var PathToTemplate = WebRootPath + Path.DirectorySeparatorChar.ToString() + "templates"
+                                 + Path.DirectorySeparatorChar.ToString() +
+                                 "Order.html";
+            var subject = "Новый заказ на сайте SweetsShopNCH";
+            string HtmlBody = "";
+            using (StreamReader sr = System.IO.File.OpenText(PathToTemplate))
+            {
+                HtmlBody = sr.ReadToEnd();
+            }
+            await SendEmailAsync(email, subject, HtmlBody);
         }
     }
 }

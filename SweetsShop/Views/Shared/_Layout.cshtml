@@ -36,6 +36,9 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Продукт</a>
                                 </ul>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="OrdersForAdmin">Заказы всех пользователей</a>
+                            </li>
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">  Отзывы    </a>
@@ -53,6 +56,9 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Index">Пользователь</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Orders">Мои заказы</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-danger" asp-route-returnUrl="@Url.Action()" asp-area="" asp-controller="Account" asp-action="Logout">Выйти</a>

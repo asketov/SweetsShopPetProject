@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SweetsShop.Additionaly;
 using SweetsShop.Data;
+using SweetsShop.Models;
 using SweetsShop.Models.Authorization;
 using SweetsShop.Models.Client;
 using SweetsShop.Models.ViewModels;
+using System.Text.Json;
 
 namespace SweetsShop.Controllers
 {
@@ -39,6 +41,24 @@ namespace SweetsShop.Controllers
                 Phone = user.Phone
             };
             return View(AccountVM);
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Details(string products)
+        {
+            List<ShoppingCart> shoppingCartList = JsonSerializer.Deserialize<List<ShoppingCart>>(products);
+            List<int> prodInCart = shoppingCartList.Select(i => i.ProductId).ToList();
+            IEnumerable<Product> prodList = _db.Products.Where(u => prodInCart.Contains(u.Id));
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Orders()
+        {
+
+            User user = await _db.Users
+                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            IEnumerable<FullOrder> fullOrders = _db.Orders.Where(u => u.UserId==user.Id);
+            return View(fullOrders);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

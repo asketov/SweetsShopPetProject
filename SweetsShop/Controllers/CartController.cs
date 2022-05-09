@@ -15,7 +15,6 @@ using SweetsShop.Data;
 using SweetsShop.Models;
 using SweetsShop.Models.Client;
 using SweetsShop.Models.ViewModels;
-using SweetsShop.Services;
 using SweetsShop.Services.Interfaces;
 
 namespace SweetsShop.Controllers
@@ -93,29 +92,11 @@ namespace SweetsShop.Controllers
             {
                 User user = await _db.Users
                     .FirstOrDefaultAsync(u => User.Identity.Name == u.Email);
-                var PathToTemplate = _webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString() + "templates"
-                                     + Path.DirectorySeparatorChar.ToString() +
-                                     "Inquiry.html";
-                var subject = "New Inquiry";
-                string HtmlBody = "";
-                using (StreamReader sr = System.IO.File.OpenText(PathToTemplate))
-                {
-                    HtmlBody = sr.ReadToEnd();
-                }
-                string messageBody = string.Format(HtmlBody,
-                    "User",
-                    user.Email,
-                    user.Phone,
-                    RegistrationVM.Sum);
-                await _emailService.SendEmailAsync(User.Identity.Name, subject, HtmlBody);
+                await _emailService.SendOrderToEmailAsync(User.Identity.Name, _webHostEnvironment.WebRootPath);
                 FullOrder fullOrder = new FullOrder()
                 {
-                    Phone = RegistrationVM.Phone,
-                    Sum = RegistrationVM.Sum,
-                    Products = JsonSerializer.Serialize(RegistrationVM.prodList),
-                    DateOrder = DateTime.Now,
-                    Address = RegistrationVM.AddressModel.AddressModelToString(),
-                    Comment = RegistrationVM.Comment,
+                    Phone = RegistrationVM.Phone, Sum = RegistrationVM.Sum, Products = JsonSerializer.Serialize(RegistrationVM.prodList),
+                    DateOrder = DateTime.Now, Address = RegistrationVM.AddressModel.AddressModelToString(), Comment = RegistrationVM.Comment,
                     UserId = user.Id
                 };
                 await _db.Orders.AddAsync(fullOrder);
@@ -123,10 +104,7 @@ namespace SweetsShop.Controllers
                 {
                     user.Address = fullOrder.Address;
                     if(RegistrationVM.AddressModel.Id!=0) _db.Update(RegistrationVM.AddressModel);
-                    else
-                    {
-                        user.AddressModel = RegistrationVM.AddressModel;
-                    }
+                    else user.AddressModel = RegistrationVM.AddressModel;
                 }
                 if (RegistrationVM.SavePhone) user.Phone = RegistrationVM.Phone;
                 _db.Users.Update(user);
