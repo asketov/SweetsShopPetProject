@@ -44,11 +44,21 @@ namespace SweetsShop.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Details(string products)
+        public IActionResult Details(string products,string returnUrl)  
         {
+            if (returnUrl != null) ViewBag.returnUrl = returnUrl;
             List<ShoppingCart> shoppingCartList = JsonSerializer.Deserialize<List<ShoppingCart>>(products);
             List<int> prodInCart = shoppingCartList.Select(i => i.ProductId).ToList();
             IEnumerable<Product> prodList = _db.Products.Where(u => prodInCart.Contains(u.Id));
+            List<ProductForUserOrder> ProductsForUserOrders = new List<ProductForUserOrder>();
+            foreach (var obj in prodList)
+            {
+                ProductForUserOrder productForUserOrder = new ProductForUserOrder();
+                productForUserOrder.Product = obj;
+                productForUserOrder.Count = shoppingCartList.FirstOrDefault(u => u.ProductId == obj.Id).Count;
+                ProductsForUserOrders.Add(productForUserOrder);
+            }
+            return View(ProductsForUserOrders);
         }
         [HttpGet]
         [Authorize]

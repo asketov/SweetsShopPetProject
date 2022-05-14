@@ -1,33 +1,38 @@
-﻿@model IEnumerable<Product>
+﻿@model List<SweetsShop.Models.ProductForUserOrder>
 
-<form method="post">
     <br />
-    <input name="returnUrl" value="@Url.Action()" hidden/>
-    <div class="backgroundWhiteBorder">
+<div class="backgroundWhiteBorder">
         <div class="container row">
             <div class="col -8">
                 <div class="card mt-4">
                     <div class="card-header bg-dark text-light ml-0 row container">
                         <div class="col-6">
                             <i class="fa fa-shopping-cart"></i> &nbsp;
-                            Корзина
                         </div>
-                        <div class="col-6 text-right">
-                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Продолжить покупки</a>
-                        </div>
+                        @if (User.IsInRole("User"))
+                        {
+                            <div class="col-6 text-right">
+                                <a asp-action="Orders" asp-controller="Account" class="btn btn-outline-info btn-sm">Назад</a>
+                            </div>
+                        }
+                        else
+                        {
+                            
+                        }
                     </div>
                     <div class="card-body">
                         <div class=" d-none d-lg-block">
                             <div class="row" style="color:#821f3d">
                                 <div class="col-lg-2">
                                 </div>
-                                <div class="col-12 col-lg-7">
+                                <div class="col-12 col-lg-5">
                                     Детали продукта
+                                </div>
+                                <div class="col-6 col-sm-4 col-lg-2">
+                                    Количество
                                 </div>
                                 <div class="col-12 col-lg-2">
                                     Цена за 100g
-                                </div>
-                                <div class="col-6 col-sm-4 col-lg-1">
                                 </div>
                             </div>
                         </div>
@@ -36,57 +41,30 @@
                         @foreach(var obj in Model){
                             <div class="row h-100">
                                 <div class="col-4 col-md-2 text-center py-2">
-                                    <img src="@WC.ImagePath@obj.Image" class="rounded" width="100%" />
+                                    <img src="@WC.ImagePath@obj.Product.Image" class="rounded" width="100%" />
                                 </div>
                                 <div class="col-6 col-lg-5">
-                                    <h5>@obj.Name</h5>
-                                    <div style="font-size:11px;">@obj.ShortDescription</div>
+                                    <h5>@obj.Product.Name</h5>
+                                    <div style="font-size:11px;">@obj.Product.ShortDescription</div>
                                 </div>
                                 <div class="col-2">
                                     <div class="row">
-                                        <button type="button" id="button1_@obj.Id" asp-route-id="@obj.Id" asp-controller="Home" asp-action="RemoveFromCart" onclick="minusCount('count_@obj.Id',this,'button2_@obj.Id',@obj.Price100g);saveValue('count_@obj.Id');" style="text-align: end; font-size: 25px; box-shadow: none;" class="col-4 btn">
-                                            <i class="fa-solid fa-circle-minus"></i>
-                                        </button>
-                                        <input value="0" disabled class="col-4" id="count_@obj.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
-                                        <button type="button" id="button2_@obj.Id" asp-route-id="@obj.Id" asp-controller="Home" asp-action="AddToCart" onclick="plusCount('count_@obj.Id',this,'button1_@obj.Id',@obj.Price100g);saveValue('count_@obj.Id');" style="text-align: justify; font-size: 25px; box-shadow: none;" class="col-4 btn">
-                                            <i class="fa-solid fa-circle-plus"></i>
-                                        </button>
-                                        <script>
-                                            var Count = document.getElementById("count_@obj.Id");
-                                            Count.value = getSavedValue("count_@obj.Id");
-                                            function getSavedValue(v) {
-                                                if (localStorage.getItem(v) === null) {
-                                                    return "0";
-                                                }
-                                                return localStorage.getItem(v);
-                                            }
-                                        </script>
+                                        <input value="@obj.Count" disabled class="col-4" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
                                     </div>
                                 </div>
                                 <div class="col-3 col-lg-2 pt-lg-4" style="font-size:11px;">
-                                    <span style="font-size:17px;"> @obj.Price100g rub</span>/ 100g
+                                    <span style="font-size:17px;"> @obj.Product.Price100g rub</span>/ 100g
                                 </div>
                                 <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
-                                    <a onclick="removeItem('count_@obj.Id',@obj.Price100g)" asp-action="Remove" asp-route-id="@obj.Id" class="btn btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
                                 </div>
                             </div>
                             <hr />
                         }
                     </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-6 col-md-3 offset-md-9">
-                                <a asp-action="RegistrationOrder" class="btn btn-outline-info btn-lg">Оформить заказ</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-</form>
 
 
 
