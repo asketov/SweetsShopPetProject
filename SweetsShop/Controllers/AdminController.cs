@@ -26,7 +26,7 @@ namespace SweetsShop.Controllers
         {
             User user = await _db.Users
                 .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-            IEnumerable<FullOrder> fullOrders = _db.Orders;
+            IEnumerable<FullOrder> fullOrders = _db.Orders.AsNoTracking();
             return View(fullOrders);
         }
         public async Task<IActionResult> Delete(int id)
@@ -39,6 +39,7 @@ namespace SweetsShop.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction("OrdersForAdmin");
         }
+        [HttpGet]
         public async Task<IActionResult> EditOrder(int id)
         {
             FullOrder Order = await _db.Orders.FirstOrDefaultAsync(u => u.Id == id);
@@ -56,9 +57,30 @@ namespace SweetsShop.Controllers
 
             EditOrderVM EditOrderVM = new EditOrderVM()
             {
-                Comment = Order.Comment, Phone = Order.Phone, Address = Order.Address, ProductsForUserOrder = ProductsForUserOrder
+                Comment = Order.Comment, Phone = Order.Phone, Address = Order.Address, ProductsForUserOrder = ProductsForUserOrder,OrderID = Order.Id
             };
             return View(EditOrderVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditOrder(EditOrderVM editOrderVM)
+        {
+            FullOrder Order = await _db.Orders.FirstOrDefaultAsync(u => u.Id == editOrderVM.OrderID);
+            Order.Address = editOrderVM.Address; Order.Comment = editOrderVM.Comment;
+            Order.Phone = editOrderVM.Phone; Order.Sum += editOrderVM.DifferenceInSum;
+            List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
+            foreach (var obj in editOrderVM.ProductsForUserOrder)
+            {
+                if (obj.Count != 0)
+                {
+                    shoppingCartList.Add(new ShoppingCart() { ProductId = obj.Product.Id, Count = obj.Count });
+                }
+            }
+            Order.Products = JsonSerializer.Serialize(shoppingCartList);
+            _db.Orders.Update(Order);
+            await _db.SaveChangesAsync();
+            return RedirectToAction("OrdersForAdmin");
         }
     }
 }

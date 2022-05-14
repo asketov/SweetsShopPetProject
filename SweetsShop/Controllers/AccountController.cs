@@ -46,7 +46,7 @@ namespace SweetsShop.Controllers
         [Authorize]
         public IActionResult Details(string products,string returnUrl)  
         {
-            if (returnUrl != null) ViewBag.returnUrl = returnUrl;
+            ViewBag.returnUrl = returnUrl;
             List<ShoppingCart> shoppingCartList = JsonSerializer.Deserialize<List<ShoppingCart>>(products);
             List<int> prodInCart = shoppingCartList.Select(i => i.ProductId).ToList();
             IEnumerable<Product> prodList = _db.Products.Where(u => prodInCart.Contains(u.Id));
@@ -62,10 +62,10 @@ namespace SweetsShop.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Orders()
+        public async Task<IActionResult> Orders(string returnUrl)
         {
-
-            User user = await _db.Users
+            if (returnUrl != null) return Redirect(returnUrl);
+            User user = await _db.Users.AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             IEnumerable<FullOrder> fullOrders = _db.Orders.Where(u => u.UserId==user.Id);
             return View(fullOrders);

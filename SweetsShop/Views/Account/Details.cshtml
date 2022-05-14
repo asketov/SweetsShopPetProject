@@ -9,16 +9,9 @@
                         <div class="col-6">
                             <i class="fa fa-shopping-cart"></i> &nbsp;
                         </div>
-                        @if (User.IsInRole("User"))
-                        {
-                            <div class="col-6 text-right">
-                                <a asp-action="Orders" asp-controller="Account" class="btn btn-outline-info btn-sm">Назад</a>
-                            </div>
-                        }
-                        else
-                        {
-                            
-                        }
+                        <div class="col-6 text-right">
+                            <a asp-action="Orders" asp-route-returnUrl="@ViewBag.returnUrl" asp-controller="Account" class="btn btn-outline-info btn-sm">Назад</a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class=" d-none d-lg-block">

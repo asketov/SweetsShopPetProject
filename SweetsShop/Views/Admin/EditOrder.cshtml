@@ -4,7 +4,8 @@
 
 <form method="post">
     <div class="border">
-        <input hidden id = "DifferenceInSum" asp-for="DifferenceInSum"/>
+        <input hidden value="0" id ="DifferenceInSumId" asp-for="DifferenceInSum"/>
+        <input hidden asp-for="@Model.OrderID"/>
         <br/>
         <div class="backgroundWhiteBorder">
             <div class="container row">
@@ -39,6 +40,7 @@
                             @for(int i=0;i<Model.ProductsForUserOrder.Count();i++)
                             {
                                     var obj = Model.ProductsForUserOrder[i];
+                                    <input hidden asp-for="@Model.ProductsForUserOrder[i].Product.Id"/>
                                     <div class="row h-100">
                                     <div class="col-4 col-md-2 text-center py-2">
                                         <img src="@WC.ImagePath@obj.Product.Image" class="rounded" width="100%"/>
@@ -52,7 +54,7 @@
                                             <button type="button" onclick="Minus('count_@obj.Product.Id',@obj.Product.Price100g);" style="text-align: end; font-size: 25px; box-shadow: none;" class="col-4 btn">
                                                 <i class="fa-solid fa-circle-minus"></i>
                                             </button>
-                                            <input value="@obj.Count" asp-for="@Model.ProductsForUserOrder[i]" disabled class="col-4" id="count_@obj.Product.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;" type="text"/>
+                                            <input asp-for="@Model.ProductsForUserOrder[i].Count" class="col-4" id="count_@obj.Product.Id" style="background-color: rgba(0, 0, 0, 0); border: none; font-size: 25px; text-align: center;"/>
                                             <button type="button" onclick="Plus('count_@obj.Product.Id',@obj.Product.Price100g);" style="text-align: justify; font-size: 25px; box-shadow: none;" class="col-4 btn">
                                                 <i class="fa-solid fa-circle-plus"></i>
                                             </button>
@@ -134,13 +136,13 @@
             var Count = document.getElementById(count_id);
             if (parseInt(Count.value) < 99) {
                 Count.value = String(parseInt(Count.value) + 1);
-                DifferenceInSum.value = String(parseInt(Count.value) + price);
+                DifferenceInSum.value = String(parseInt(DifferenceInSum.value) + parseInt(price));
             }
         }
         function Minus(count_id, price) {
             var Count = document.getElementById(count_id);
             if (parseInt(Count.value) > 0) Count.value = String(parseInt(Count.value) - 1);
-            DifferenceInSum.value = String(parseInt(Count.value) - price);
+            DifferenceInSum.value = String(parseInt(DifferenceInSum.value) - parseInt(price));
         }
     </script>
 }

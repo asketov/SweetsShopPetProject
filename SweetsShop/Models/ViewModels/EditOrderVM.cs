@@ -9,6 +9,7 @@ namespace SweetsShop.Models.ViewModels
 {
     public class EditOrderVM
     {
+        public int OrderID { get; set;}
         public string Address { get; set; }
         public string Phone { get; set; }
         public List<ProductForUserOrder> ProductsForUserOrder { get; set; }
