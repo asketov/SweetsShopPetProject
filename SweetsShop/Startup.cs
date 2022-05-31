@@ -33,7 +33,7 @@ namespace SweetsShop
                     Configuration.GetConnectionString("DefaultConnection")
                 ));
             services.AddHttpContextAccessor();
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddSingleton<IEmailService, EmailService>();
             services.AddSession(Options => {
                 Options.IdleTimeout = TimeSpan.FromMinutes(100);
                 Options.Cookie.HttpOnly = true;
@@ -63,7 +63,7 @@ namespace SweetsShop
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

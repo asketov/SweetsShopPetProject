@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/fontawesome/css/all.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css">
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site1.css" />
 </head>
 <body>
     <header>
@@ -40,9 +40,6 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="OrdersForAdmin">Заказы всех пользователей</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">  Отзывы    </a>
-                        </li>
                         @if (!User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">

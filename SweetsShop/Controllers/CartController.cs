@@ -65,7 +65,6 @@ namespace SweetsShop.Controllers
         [Authorize]
         public async Task<IActionResult> RegistrationOrder()
         {
-
             List<ShoppingCart> shoppingCartList = new List<ShoppingCart>();
             User user = await _db.Users.Include(u=>u.AddressModel).FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null &&

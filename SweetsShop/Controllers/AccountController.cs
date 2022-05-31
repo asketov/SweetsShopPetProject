@@ -16,15 +16,21 @@ using SweetsShop.Models.Authorization;
 using SweetsShop.Models.Client;
 using SweetsShop.Models.ViewModels;
 using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
+using SweetsShop.Services.Interfaces;
 
 namespace SweetsShop.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _db;
-        public AccountController(ApplicationDbContext db)
+        private readonly IEmailService _emailService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public AccountController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment, IEmailService emailService)
         {
             _db = db;
+            _emailService = emailService;
+            _webHostEnvironment = webHostEnvironment;
         }
         [HttpGet]
         [Authorize]
@@ -69,6 +75,49 @@ namespace SweetsShop.Controllers
                 .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             IEnumerable<FullOrder> fullOrders = _db.Orders.Where(u => u.UserId==user.Id);
             return View(fullOrders);
+        }
+
+        [HttpGet]
+        public IActionResult InputEmail()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> RecoverPassword(string email)
+        {
+            User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if(user!=null) _emailService.SendRecoverCodeToEmailAsync(email, _webHostEnvironment.WebRootPath);
+            else {
+                ModelState.AddModelError("", "Пользователь с таким Email не существует");
+                return RedirectToAction(nameof(InputEmail));
+            }
+
+            RecoverPasswordModel recoverPasswordModel = new RecoverPasswordModel()
+            {
+                Email = email
+            };
+            return View(recoverPasswordModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordModel recoverPasswordModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (recoverPasswordModel.Code == _emailService.CodeToRecoverPassword)
+                {
+                    User user = await _db.Users.FirstOrDefaultAsync(u => u.Email == recoverPasswordModel.Email);
+                    if (user != null)
+                    {
+                        user.PasswordHash = HashingPassword.HashPassword(recoverPasswordModel.Password);
+                        return RedirectToAction(nameof(Login));
+                    }
+                    else ModelState.AddModelError("", "Пользователь с таким Email не существует");
+                }
+                else ModelState.AddModelError("", "Неправильно введён код");
+            }
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -156,7 +205,8 @@ namespace SweetsShop.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl)
         {
-            if(returnUrl != null) ViewBag.returnUrl = returnUrl;
+            
+            if (returnUrl != null) ViewBag.returnUrl = returnUrl;
             return View();
         }
         [HttpPost]

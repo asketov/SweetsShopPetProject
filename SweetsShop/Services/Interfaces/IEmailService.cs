@@ -10,5 +10,7 @@ namespace SweetsShop.Services.Interfaces
     {
         Task SendEmailAsync(string email, string subject, string message);
         Task SendOrderToEmailAsync(string email, string WebRootPath);
+        Task SendRecoverCodeToEmailAsync(string email, string WebRootPath);
+        public int CodeToRecoverPassword { get; set; }
     }
 }

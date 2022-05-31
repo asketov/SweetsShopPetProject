@@ -15,6 +15,7 @@ namespace SweetsShop.Models.Authorization
 
         [Required(ErrorMessage = "Не указан пароль")]
         [DataType(DataType.Password)]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
     }
 }

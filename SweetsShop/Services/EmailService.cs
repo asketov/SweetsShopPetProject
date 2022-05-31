@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using MimeKit;
 using MailKit.Net.Smtp;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace SweetsShop.Services
 {
     public class EmailService : IEmailService
     {
+        public int CodeToRecoverPassword { get; set; }
         public async Task SendEmailAsync(string email, string subject, string message)
         {
             var emailMessage = new MimeMessage();
@@ -44,6 +46,23 @@ namespace SweetsShop.Services
                 HtmlBody = sr.ReadToEnd();
             }
             await SendEmailAsync(email, subject, HtmlBody);
+        }
+
+        public async Task SendRecoverCodeToEmailAsync(string email, string WebRootPath)
+        {
+            var PathToTemplate = WebRootPath + Path.DirectorySeparatorChar.ToString() + "templates"
+                                 + Path.DirectorySeparatorChar.ToString() +
+                                 "RecoverPassword.html";
+            var subject = "Восстановление пароля на сайте SweetsShopNCH";
+            string HtmlBody = "";
+            using (StreamReader sr = System.IO.File.OpenText(PathToTemplate))
+            {
+                HtmlBody = sr.ReadToEnd();
+            }
+            Random rnd = new Random();
+            CodeToRecoverPassword = rnd.Next(100000, 999999);
+            string messageBody = string.Format(HtmlBody, CodeToRecoverPassword);
+            await SendEmailAsync(email, subject, messageBody);
         }
     }
 }
